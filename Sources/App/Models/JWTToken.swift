@@ -1,0 +1,63 @@
+//
+//  File 2.swift
+//  
+//
+//  Created by Marcos on 26/3/24.
+//
+
+import Vapor
+import JWT
+
+enum JWTTokenType: String, Codable {
+    case acess
+    case refresh
+    
+}
+
+struct JWTToken: Content, JWTPayload {
+    
+    //Payload
+    var exp: ExpirationClaim
+    var sub: SubjectClaim
+    var type: JWTTokenType
+    
+
+    
+    func verify(using signer: JWTKit.JWTSigner) throws {
+        // Token is not expired
+        try exp.verifyNotExpired()
+        //Validate the subject
+        guard let _ = UUID(sub.value) else {
+            throw JWTError.claimVerificationFailure(name: "sub", reason: "Subject is invalid")
+        }
+        
+        guard type == .acess || type == .refresh else {
+            throw JWTError.claimVerificationFailure(name: "type", reason: "Type is invalid")
+        }
+        
+    }
+}
+
+extension JWTToken {
+    struct Public: Content {
+        let accesToken: String
+        let refreshToken: String
+    }
+}
+
+extension JWTToken {
+    static func generateToken(userID: UUID) -> (accessToken: JWTToken, refreshToken: JWTToken){
+        
+        var expDate = Date().addingTimeInterval(Constants.accessTokenLifeTime)
+        let user = userID.uuidString
+        
+        let accessToken = JWTToken(exp: .init(value: expDate), sub: .init(value: user), type: .acess)
+        
+        expDate = Date().addingTimeInterval(Constants.refreshTokenLifeTime)
+        let refreshToken = JWTToken(exp: .init(value: expDate), sub: .init(value: user), type: .acess)
+        
+        return (accessToken, refreshToken)
+    }
+}
+
+

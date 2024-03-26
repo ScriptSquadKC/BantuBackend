@@ -2,6 +2,7 @@ import NIOSSL
 import Fluent
 import FluentPostgresDriver
 import Vapor
+import JWT
 
 // configures your application
 public func configure(_ app: Application) async throws {
@@ -34,6 +35,16 @@ public func configure(_ app: Application) async throws {
 
     //Configure DB
     try app.databases.use(.postgres(url: dbURL), as: .psql)
+    
+    //Configure passwords hashes
+    app.passwords.use(.bcrypt)
+    
+    //Configure JWT
+    app.jwt.signers.use(.hs256(key: jwtKey))
+    
+    //Migrations
+    //To run the migrations swift run App migrate
+    app.migrations.add(ModelsMigration_v0())
 
 
     // register routes
