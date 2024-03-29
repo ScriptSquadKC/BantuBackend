@@ -14,7 +14,7 @@ enum JWTTokenType: String, Codable {
     
 }
 
-struct JWTToken: Content, JWTPayload {
+struct JWTToken: Content, JWTPayload, Authenticatable {
     
     //Payload
     var exp: ExpirationClaim
@@ -46,15 +46,15 @@ extension JWTToken {
 }
 
 extension JWTToken {
+    
     static func generateToken(userID: UUID) -> (accessToken: JWTToken, refreshToken: JWTToken){
-        
         var expDate = Date().addingTimeInterval(Constants.accessTokenLifeTime)
         let user = userID.uuidString
         
         let accessToken = JWTToken(exp: .init(value: expDate), sub: .init(value: user), type: .acess)
         
         expDate = Date().addingTimeInterval(Constants.refreshTokenLifeTime)
-        let refreshToken = JWTToken(exp: .init(value: expDate), sub: .init(value: user), type: .acess)
+        let refreshToken = JWTToken(exp: .init(value: expDate), sub: .init(value: user), type: .refresh)
         
         return (accessToken, refreshToken)
     }
