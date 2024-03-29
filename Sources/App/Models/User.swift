@@ -22,19 +22,15 @@ final class User: Model {
     @Field(key: "name")
     var name: String
     
-    @Timestamp(key: "last_connection", on: .create, format: .iso8601)
-    var latsConnection: Date?
-    
     @Field(key: "email")
     var email: String
     
     @Field(key: "password")
     var password: String
     
-    init(id: UUID? = nil, name: String, latsConnection: Date? = nil, email: String, password: String) {
+    init(id: UUID? = nil, name: String, email: String, password: String) {
         self.id = id
         self.name = name
-        self.latsConnection = latsConnection
         self.email = email
         self.password = password
     }
@@ -47,4 +43,21 @@ extension User: ModelAuthenticatable {
     func verify(password: String) throws -> Bool {
         try Bcrypt.verify(password, created: self.password)
     }
+}
+
+//DTO
+extension User {
+    
+    struct Public: Content {
+        let id: String
+        let name: String
+        let email: String
+    }
+    
+    struct Create: Content {
+        let name: String
+        let email: String
+        let password: String
+    }
+    
 }
