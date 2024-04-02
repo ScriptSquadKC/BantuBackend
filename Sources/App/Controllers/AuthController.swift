@@ -33,16 +33,16 @@ extension AuthController{
     
     func createUser(req: Request) async throws -> User.Public {
         
-        let receivedUser = try req.content.decode(User.Create.self)
+//        Checks if the request is valid
+        try User.Create.validate(content: req)
         
+        let receivedUser = try req.content.decode(User.Create.self)
         let hasedhPassword = try req.password.hash(receivedUser.password)
         
         let user = User(name: receivedUser.name, email: receivedUser.email, password: hasedhPassword)
         
-        
         try await user.create(on: req.db)
         
-
         return User.Public(id: user.id!.uuidString, name: user.name, email: user.email)
     }
     

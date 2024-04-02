@@ -54,10 +54,18 @@ extension User {
         let email: String
     }
     
-    struct Create: Content {
+    struct Create: Content, Validatable {
         let name: String
         let email: String
         let password: String
+        
+        static func validations(_ validations: inout Vapor.Validations) {
+            validations.add("name", as: String.self, is: !.empty, required: true, customFailureDescription: "Invalid name")
+            validations.add("email", as: String.self, is: .email, required: true, customFailureDescription: "Invalid email")
+            validations.add("password", as: String.self, is: .count(6...), required: true, customFailureDescription: "Invalid password")
+
+
+        }
     }
     
 }
