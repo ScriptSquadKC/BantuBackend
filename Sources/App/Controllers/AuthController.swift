@@ -32,18 +32,59 @@ struct AuthController: RouteCollection{
 extension AuthController{
     
     func createUser(req: Request) async throws -> User.Public {
-        
+        print(req)
 //        Checks if the request is valid
         try User.Create.validate(content: req)
         
         let receivedUser = try req.content.decode(User.Create.self)
+
         let hasedhPassword = try req.password.hash(receivedUser.password)
         
-        let user = User(name: receivedUser.name, email: receivedUser.email, password: hasedhPassword)
+        //Try yo get the province
+
+        guard let provinceExist = try await Province.find(receivedUser.provinceId, on: req.db) else{
+            throw Abort(.notFound)
+        }
+        
+        guard let countryExist = try await Country.find(receivedUser.countryId, on: req.db) else{
+            throw Abort(.notFound)
+        }
+        
+        
+        let user = User(
+            name: receivedUser.name,
+            email: receivedUser.email,
+            password: hasedhPassword,
+            lastName1: receivedUser.lastName1,
+            lastName2: receivedUser.lastName2,
+            postalCode: receivedUser.postalCode,
+            city: receivedUser.city,
+            active: receivedUser.active ?? true,
+            avatar: receivedUser.avatar ?? "defaultAvatar"
+        )
+        
+        user.$province.id = try provinceExist.requireID()
+        user.$country.id = try countryExist.requireID()
         
         try await user.create(on: req.db)
-        
-        return User.Public(id: user.id!.uuidString, name: user.name, email: user.email)
+                
+        //Try to get the user updated
+        guard let createdUser = try await User.find(user.requireID(), on: req.db) else {
+            throw Abort(.notFound)
+        }
+                    
+        return User.Public(
+            id: createdUser.id ?? 0,
+            name: createdUser.name,
+            email: createdUser.email,
+            lastName1: createdUser.lastName1,
+            lastName2: createdUser.lastName2,
+            provinceId: createdUser.$province.id,
+            countryId: createdUser.$country.id,
+            city: createdUser.city ?? "",
+            postalCode: createdUser.postalCode,
+            active: createdUser.active
+        )
     }
     
     func signIn(req: Request) async throws -> JWTToken.Public {
@@ -60,7 +101,7 @@ extension AuthController{
             throw Abort(.methodNotAllowed, reason: "Wrong token type, expecting refresh")
         }
         //Find user in the DDBB
-        guard let user = try await User.find(UUID(token.sub.value), on: req.db) else{
+        guard let user = try await User.find(Int(token.sub.value), on: req.db) else{
             throw Abort(.unauthorized, reason: "User not found")
         }
         

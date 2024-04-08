@@ -17,11 +17,16 @@ public func configure(_ app: Application) async throws {
     guard let _ = Environment.process.API_KEY else {
         fatalError("API_KEY not found")
     }
-    guard let dbURL = Environment.process.DATABASE_URL else {
-        fatalError("DATABASE_URL not found")
-    }
+
 
     //Configure DB
+    let dbHost = "flora.db.elephantsql.com"
+    let dbPort = 5432
+    let dbName = "kzpbpirk"
+    let dbUser = Environment.get("DB_USER") ?? ""
+    let dbPassword = Environment.get("DB_PASSWORD") ?? ""
+    let dbURL = "postgres://\(dbUser):\(dbPassword)@\(dbHost):\(dbPort)/\(dbName)"
+    
     try app.databases.use(.postgres(url: dbURL), as: .psql)
     
     //Configure passwords hashes

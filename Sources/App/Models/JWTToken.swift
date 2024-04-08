@@ -47,9 +47,9 @@ extension JWTToken {
 
 extension JWTToken {
     
-    static func generateToken(userID: UUID) -> (accessToken: JWTToken, refreshToken: JWTToken){
+    static func generateToken(userID: Int) -> (accessToken: JWTToken, refreshToken: JWTToken){
         var expDate = Date().addingTimeInterval(Constants.accessTokenLifeTime)
-        let user = userID.uuidString
+        let user = String(userID)
         
         let accessToken = JWTToken(exp: .init(value: expDate), sub: .init(value: user), type: .acess)
         
