@@ -17,19 +17,23 @@ final class Province: Model {
     //Name of the table
     static let schema = "provinces"
     
-    @ID(custom: "id", generatedBy: .database)
+    @ID(custom: "province_id", generatedBy: .database)
     var id: Int?
     
-    @Field(key: "name")
-    var name: String
+    @Field(key: "country_id")
+    var country_id: Int
+    
+    @Field(key: "province")
+    var province: String
     
     @Field(key: "active")
     var active: Bool
     
     
-    init(id: Int? = nil, name: String, active: Bool) {
+    init(id: Int? = nil, country_id: Int, province: String, active: Bool) {
         self.id = id
-        self.name = name
+        self.country_id = country_id
+        self.province = province
         self.active = active
     }
 }
@@ -43,7 +47,7 @@ extension Province {
     }
     
     func convertToPublic() -> Province.Public {
-           return Province.Public(id: self.id ?? 0, name: self.name, active: self.active)
+        return Province.Public(id: self.id ?? 0, name: self.province, active: self.active)
        }
 }
 

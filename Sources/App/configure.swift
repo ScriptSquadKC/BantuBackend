@@ -20,9 +20,9 @@ public func configure(_ app: Application) async throws {
 
 
     //Configure DB
-    let dbHost = "flora.db.elephantsql.com"
+    let dbHost = "90.163.132.130"
     let dbPort = 5432
-    let dbName = "kzpbpirk"
+    let dbName = "bantuDB"
     let dbUser = Environment.get("DB_USER") ?? ""
     let dbPassword = Environment.get("DB_PASSWORD") ?? ""
     let dbURL = "postgres://\(dbUser):\(dbPassword)@\(dbHost):\(dbPort)/\(dbName)"

@@ -44,6 +44,7 @@ final class User: Model {
     
     @Parent(key: "country_id")
     var country: Country
+ 
     //TODO: See how to do this
     @Field(key: "avatar")
     var avatar: String
@@ -57,12 +58,12 @@ final class User: Model {
     @Timestamp(key: "creation_date", on: .create)
     var creationDate: Date?
     
-    @Timestamp(key: "deletion_date", on: .none)
-    var deletionDate: Date?
+    @Timestamp(key: "leaving_date", on: .none)
+    var leavingDate: Date?
     
     
     
-    init(id: Int? = nil, name: String, email: String, password: String, lastName1: String, lastName2: String, postalCode: String? = "", city: String? = "", active: Bool, avatar: String, creationDate: Date? = nil, deletionDate: Date? = nil ) {
+    init(id: Int? = nil, name: String, email: String, password: String, lastName1: String, lastName2: String, postalCode: String? = "", city: String? = "", active: Bool, avatar: String, creationDate: Date? = nil, leavingDate: Date? = nil ) {
         self.id = id
         self.name = name
         self.email = email
@@ -72,7 +73,7 @@ final class User: Model {
         self.lastName1 = lastName1
         self.lastName2 = lastName2
         self.creationDate = creationDate
-        self.deletionDate = deletionDate
+        self.leavingDate = leavingDate
         self.city = city
         self.postalCode = postalCode
         // No se asignan directamente province y country aquí
