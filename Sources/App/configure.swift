@@ -38,10 +38,14 @@ public func configure(_ app: Application) async throws {
     guard let dbSchema = Environment.get("DB_SCHEMA") else {
         fatalError("Database schema not found")
     }
+   
     
     
-    let dbURL = "postgres://\(dbUser):\(dbPassword)@\(dbHost):\(dbPort)/\(dbName)?schema=\(dbSchema)"
+    let dbURL = "postgres://\(dbUser):\(dbPassword)@\(dbHost):\(dbPort)/\(dbName)"
+
     try app.databases.use(.postgres(url: dbURL), as: .psql)
+    
+
     
     //Configure passwords hashes
     app.passwords.use(.bcrypt)
