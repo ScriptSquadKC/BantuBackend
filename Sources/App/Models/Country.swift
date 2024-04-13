@@ -34,5 +34,18 @@ final class Country: Model {
     }
 }
 
+extension Country {
+    
+    struct Public: Content {
+        let id: Int
+        let name: String
+        let active: Bool
+    }
+    
+    func convertToPublic() -> Country.Public {
+           return Country.Public(id: self.id ?? 0, name: self.name, active: self.active)
+       }
+}
+
 
 

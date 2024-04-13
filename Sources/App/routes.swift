@@ -10,6 +10,7 @@ func routes(_ app: Application) throws {
     try app.group("api"){ builder in
         
         try  builder.register(collection: AuthController())
+        try  builder.register(collection: CountryController())
         
         //Put in this middleware the endpoints that need the token
         try builder.group(APIKeyMiddleware()) { builder in
