@@ -11,7 +11,6 @@ import Fluent
 struct AuthController: RouteCollection{
     func boot(routes: Vapor.RoutesBuilder) throws {
         routes.group("auth") { builder in
-            //TODO: Add signup out of the builder
             builder.post("signup", use: createUser)
             
             //Protected by user and password
@@ -40,12 +39,18 @@ extension AuthController{
 
         let hasedhPassword = try req.password.hash(receivedUser.password)
         
-        //Try yo get the province
-
+        //Checks if the email exist
+        let existingEmail = try await User.query(on: req.db).filter(\.$email == receivedUser.email).first().get()
+        
+       if existingEmail != nil {
+           throw Abort(.custom(code: 409, reasonPhrase: "Duplicated email"))
+        }
+        
+        //Try to get the province
         guard let provinceExist = try await Province.find(receivedUser.provinceId, on: req.db) else{
             throw Abort(.notFound)
         }
-        
+        //Try to get the country
         guard let countryExist = try await Country.find(receivedUser.countryId, on: req.db) else{
             throw Abort(.notFound)
         }
