@@ -15,7 +15,7 @@ struct AuthController: RouteCollection{
             
             //Protected by user and password
             builder.group(User.authenticator(), User.guardMiddleware()) { builder in
-                builder.get("signin", use: signIn)
+                builder.post("signin", use: signIn)
             }
             
             //Protected by token
