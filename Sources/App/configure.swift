@@ -20,14 +20,32 @@ public func configure(_ app: Application) async throws {
 
 
     //Configure DB
-    let dbHost = "flora.db.elephantsql.com"
-    let dbPort = 5432
-    let dbName = "kzpbpirk"
-    let dbUser = Environment.get("DB_USER") ?? ""
-    let dbPassword = Environment.get("DB_PASSWORD") ?? ""
-    let dbURL = "postgres://\(dbUser):\(dbPassword)@\(dbHost):\(dbPort)/\(dbName)"
+    guard let dbHost = Environment.get("DATABASE_HOST") else {
+        fatalError("DATABASE_HOST not found")
+    }
+    guard let dbPort = Environment.get("DB_PORT") else {
+        fatalError("Database port not found")
+    }
+    guard let dbName = Environment.get("DB_NAME") else {
+        fatalError("Database name not found")
+    }
+    guard let dbUser = Environment.get("DB_USER") else {
+        fatalError("Database user not found")
+    }
+    guard let dbPassword = Environment.get("DB_PASSWORD") else {
+        fatalError("Database password not found")
+    }
+    guard let dbSchema = Environment.get("DB_SCHEMA") else {
+        fatalError("Database schema not found")
+    }
+   
     
+    
+    let dbURL = "postgres://\(dbUser):\(dbPassword)@\(dbHost):\(dbPort)/\(dbName)"
+
     try app.databases.use(.postgres(url: dbURL), as: .psql)
+    
+
     
     //Configure passwords hashes
     app.passwords.use(.bcrypt)
