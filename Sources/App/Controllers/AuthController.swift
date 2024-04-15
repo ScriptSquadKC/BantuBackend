@@ -11,16 +11,16 @@ import Fluent
 struct AuthController: RouteCollection{
     func boot(routes: Vapor.RoutesBuilder) throws {
         routes.group("auth") { builder in
-            builder.post("signup", use: createUser)
+            builder.post("signup/", use: createUser)
             
             //Protected by user and password
             builder.group(User.authenticator(), User.guardMiddleware()) { builder in
-                builder.post("signin", use: signIn)
+                builder.post("signin/", use: signIn)
             }
             
             //Protected by token
             builder.group(JWTToken.authenticator(), JWTToken.guardMiddleware()) { builder in
-                builder.get("refresh", use: refreshToken)
+                builder.get("refresh/", use: refreshToken)
             }
         }
     }

@@ -12,8 +12,8 @@ struct CountryController: RouteCollection{
     
     func boot(routes: Vapor.RoutesBuilder) throws {
         routes.group("countries") { builder in
-            builder.get("all", use: getAllCountries)
-            builder.get(":id", use: getCountryByID)
+            builder.get("all/", use: getAllCountries)
+            builder.get(":id", "/", use: getCountryByID)
         }
     }
     
