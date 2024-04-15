@@ -31,7 +31,7 @@ final class User: Model {
     var lastName2: String
     
     @Field(key: "postal_code")
-    var postalCode: Int?
+    var postalCode: String?
     
     @Parent(key: "province_id")
     var province: Province
@@ -63,7 +63,7 @@ final class User: Model {
     
     
     
-    init(id: Int? = nil, name: String, email: String, password: String, lastName1: String, lastName2: String, postalCode: Int? = 1, city: String? = "", active: Bool, avatar: String, creationDate: Date? = nil, leavingDate: Date? = nil ) {
+    init(id: Int? = nil, name: String, email: String, password: String, lastName1: String, lastName2: String, postalCode: String? = "", city: String? = "", active: Bool, avatar: String, creationDate: Date? = nil, leavingDate: Date? = nil ) {
         self.id = id
         self.name = name
         self.email = email
@@ -102,7 +102,7 @@ extension User {
         let provinceId: Int
         let countryId: Int 
         let city: String?
-        let postalCode: Int?
+        let postalCode: String?
         let active: Bool
     }
     
@@ -115,7 +115,7 @@ extension User {
         let provinceId: Int
         let countryId: Int
         let city: String?
-        let postalCode: Int?
+        let postalCode: String?
         let avatar: String?
         let active: Bool?
         
