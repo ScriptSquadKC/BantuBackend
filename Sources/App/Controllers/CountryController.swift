@@ -13,6 +13,7 @@ struct CountryController: RouteCollection{
     func boot(routes: Vapor.RoutesBuilder) throws {
         routes.group("countries") { builder in
             builder.get("all", use: getAllCountries)
+            builder.get(":id", use: getCountryByID)
         }
     }
     
@@ -25,7 +26,7 @@ extension CountryController {
     func getAllCountries(req: Request) async throws -> [Country.Public]{
          let countries = try await Country.query(on: req.db)
             .filter(\.$active == true)
-            .sort(\.$name)
+            .sort(\.$country)
             .all()
                 
 //        Transform Conutry into Country.public and returns the list
