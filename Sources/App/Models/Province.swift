@@ -42,12 +42,12 @@ extension Province {
     
     struct Public: Content {
         let id: Int
-        let name: String
+        let province: String
         let active: Bool
     }
     
     func convertToPublic() -> Province.Public {
-        return Province.Public(id: self.id ?? 0, name: self.province, active: self.active)
+        return Province.Public(id: self.id ?? 0, province: self.province, active: self.active)
        }
 }
 
