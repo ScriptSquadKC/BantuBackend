@@ -95,10 +95,16 @@ extension AuthController{
     func signIn(req: Request) async throws -> JWTToken.Public {
         //Get the user
         let user = try req.auth.require(User.self)
-        return try await generateToken(req: req, user: user)
+        let token = try await generateToken(req: req, user: user)
+        
+        guard let userId = user.id else {
+            throw Abort(.expectationFailed, reason: "User not found")
+        }
+       
+        return JWTToken.Public(accesToken: token.accesToken, refreshToken: token.refreshToken, userId: userId )
     }
     
-    func refreshToken(req: Request) async throws -> JWTToken.Public {
+    func refreshToken(req: Request) async throws -> JWTToken.Intern {
         //Get refresh token
         let token = try req.auth.require(JWTToken.self)
         
@@ -118,12 +124,12 @@ extension AuthController{
 
 extension AuthController {
     
-    func generateToken(req: Request, user: User ) async throws -> JWTToken.Public{
+    func generateToken(req: Request, user: User ) async throws -> JWTToken.Intern{
 
         let tokens = JWTToken.generateToken(userID: user.id!)
         let accesSigned = try req.jwt.sign(tokens.accessToken)
         let refreshSigned = try req.jwt.sign(tokens.refreshToken)
         
-        return JWTToken.Public(accesToken: accesSigned, refreshToken: refreshSigned)
+        return JWTToken.Intern(accesToken: accesSigned, refreshToken: refreshSigned)
     }
 }
