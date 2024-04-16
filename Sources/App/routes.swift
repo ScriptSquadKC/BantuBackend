@@ -14,6 +14,7 @@ func routes(_ app: Application) throws {
         try  builder.register(collection: ProvinceController())
         //Put in this middleware the endpoints that need the token
         try builder.group(APIKeyMiddleware()) { builder in
+            try builder.register(collection: ProfessionalController())
         }
     }
     
