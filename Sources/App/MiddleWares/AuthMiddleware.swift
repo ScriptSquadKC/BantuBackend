@@ -9,30 +9,30 @@ import Vapor
 
 struct AuthMiddleware: AsyncMiddleware {
     func respond(to request: Vapor.Request, chainingTo next: Vapor.AsyncResponder) async throws -> Vapor.Response {
-        
-        //get the token from headers
-        guard let authToken = request.headers.first(name: "Authorization") else {
-            throw Abort(.badRequest, reason: "Token is missing")
-        }
-        
-        // remove the prefix "Bearer "
-         guard let token = authToken.split(separator: " ").last else {
-             throw Abort(.badRequest, reason: "Invalid authorization header")
-         }
-        
+                
         do {
-                   // Verificar el token JWT
-                   let jwtVerifier = try request.jwt.verify(JWTToken.self)
-                   try jwtVerifier.verify(token)
+                // Extract token from headers
+                guard let token = request.headers.first(name: "Authorization") else {
+                    throw Abort(.unauthorized, reason: "Missing Authorization header")
+                }
+            
+            guard let bearerRange = token.range(of: "Bearer ") else {
+                throw Abort(.unauthorized, reason: "Invalid Authorization header format")
+            }
+            
+            let cleanToken = token.replacingCharacters(in: bearerRange, with: "")
+            
+                   // Verify and decode token
+                   let _ = try request.jwt.verify(cleanToken, as: JWTToken.self)
+            
                    
-                   // Token válido, continuar con la solicitud
-                   return next.respond(to: request)
+                   // Token is valid
+                return try await next.respond(to: request)
+            
                } catch {
-                   return request.eventLoop.makeFailedFuture(Abort(.unauthorized, reason: "Invalid token"))
+                   throw Abort(.unauthorized, reason: "Invalid token")
                }
-   
+
     }
-    
-    
     
 }

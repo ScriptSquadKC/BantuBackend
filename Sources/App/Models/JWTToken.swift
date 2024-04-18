@@ -27,10 +27,9 @@ struct JWTToken: Content, JWTPayload, Authenticatable {
         // Token is not expired
         try exp.verifyNotExpired()
         //Validate the subject
-        guard let _ = UUID(sub.value) else {
+        if(sub.value.isEmpty){
             throw JWTError.claimVerificationFailure(name: "sub", reason: "Subject is invalid")
         }
-        
         guard type == .acess || type == .refresh else {
             throw JWTError.claimVerificationFailure(name: "type", reason: "Type is invalid")
         }
