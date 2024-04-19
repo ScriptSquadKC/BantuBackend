@@ -41,31 +41,39 @@ extension AuthController{
         
         //Checks if the email exist
         let existingEmail = try await User.query(on: req.db).filter(\.$email == receivedUser.email).first().get()
-        
+       
        if existingEmail != nil {
            throw Abort(.custom(code: 409, reasonPhrase: "Duplicated email"))
         }
         
+        let existingNickname = try await User.query(on: req.db).filter(\.$nickname == receivedUser.nickname).first().get()
+
+        if existingNickname != nil {
+            throw Abort(.custom(code: 409, reasonPhrase: "Duplicated nickname"))
+        }
+        
+        
         //Try to get the province
-        guard let provinceExist = try await Province.find(receivedUser.provinceId, on: req.db) else{
+        guard let provinceExist = try await Province.find(receivedUser.provinceId ?? 1, on: req.db) else{
             throw Abort(.notFound)
         }
         //Try to get the country
-        guard let countryExist = try await Country.find(receivedUser.countryId, on: req.db) else{
+        guard let countryExist = try await Country.find(receivedUser.countryId ?? 1, on: req.db) else{
             throw Abort(.notFound)
         }
         
         
+
         let user = User(
-            name: receivedUser.name,
+            name: receivedUser.name ?? "",
             email: receivedUser.email,
             password: hasedhPassword,
-            lastName1: receivedUser.lastName1,
-            lastName2: receivedUser.lastName2,
-            postalCode: receivedUser.postalCode,
-            city: receivedUser.city,
+            lastName1: receivedUser.lastName1 ?? "",
+            lastName2: receivedUser.lastName2 ?? "",
+            postalCode: receivedUser.postalCode ?? "",
+            city: receivedUser.city ?? "",
             active: receivedUser.active ?? true,
-            nickname: receivedUser.nickname ?? "defaultAvatar",
+            nickname: receivedUser.nickname,
             photo: receivedUser.photo ?? "http://90.163.132.130:8090/bantu/user00.png"
         )
         

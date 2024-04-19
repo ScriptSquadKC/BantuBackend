@@ -45,7 +45,6 @@ final class User: Model {
     @Parent(key: "country_id")
     var country: Country
  
-    //TODO: See how to do this
     @Field(key: "nickname")
     var nickname: String
     
@@ -103,8 +102,8 @@ extension User {
         let email: String
         let lastName1: String
         let lastName2: String
-        let provinceId: Int
-        let countryId: Int 
+        let provinceId: Int?
+        let countryId: Int?
         let city: String?
         let postalCode: String?
         let nickname: String?
@@ -113,23 +112,22 @@ extension User {
     }
     
     struct Create: Content, Validatable {
-        let name: String
+        let name: String?
         let email: String
         let password: String
-        let lastName1: String
-        let lastName2: String
-        let provinceId: Int
-        let countryId: Int
+        let lastName1: String?
+        let lastName2: String?
+        let provinceId: Int?
+        let countryId: Int?
         let city: String?
         let postalCode: String?
-        let nickname: String?
+        let nickname: String
         let photo: String?
         let active: Bool?
+        let isProfessional: Bool?
         
         static func validations(_ validations: inout Vapor.Validations) {
-            validations.add("name", as: String.self, is: !.empty, required: true, customFailureDescription: "Invalid name")
-            validations.add("lastName1", as: String.self, is: !.empty, required: true, customFailureDescription: "Invalid last_name1")
-            validations.add("lastName2", as: String.self, is: !.empty, required: true, customFailureDescription: "Invalid last_name2")
+            validations.add("nickname", as: String.self, is: !.empty, required: true, customFailureDescription: "Invalid nickname")
             validations.add("email", as: String.self, is: .email, required: true, customFailureDescription: "Invalid email")
             validations.add("password", as: String.self, is: .count(6...), required: true, customFailureDescription: "Invalid password")
         }
