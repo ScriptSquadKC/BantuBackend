@@ -34,9 +34,6 @@ final class Professional: Model {
     @Parent(key: "suscription_id")
     var pro_Suscription: ProSuscription
 
-    @Field(key: "photo")
-    var photo: String?
-    
     @Field(key: "description")
     var description: String?
     
@@ -50,11 +47,10 @@ final class Professional: Model {
     var active: Bool
     
         
-    init(id: Int? = nil, nif: String,  telephone: Int, photo: String? = "", description: String? = "", creationDate: Date? = nil, leavingDate: Date? = nil, active: Bool) {
+    init(id: Int? = nil, nif: String,  telephone: Int, description: String? = "", creationDate: Date? = nil, leavingDate: Date? = nil, active: Bool) {
         self.id = id
         self.nif = nif
         self.telephone = telephone
-        self.photo = photo
         self.description = description
         self.creationDate = creationDate
         self.leavingDate = leavingDate
@@ -70,7 +66,6 @@ extension Professional {
         let id: Int
         let nif: String
         let telephone: Int
-        let photo: String?
         let description: String?
         let creationDate: Date
         let leavingDate: Date
@@ -83,7 +78,6 @@ extension Professional {
         let telephone: Int
         let type_id: Int
         let suscription_id: String
-        let photo: String?
         let description: String?
         let active: Bool?
         

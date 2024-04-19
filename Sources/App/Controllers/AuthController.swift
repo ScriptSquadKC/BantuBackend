@@ -65,7 +65,8 @@ extension AuthController{
             postalCode: receivedUser.postalCode,
             city: receivedUser.city,
             active: receivedUser.active ?? true,
-            avatar: receivedUser.avatar ?? "defaultAvatar"
+            nickname: receivedUser.nickname ?? "defaultAvatar",
+            photo: receivedUser.photo ?? "http://90.163.132.130:8090/bantu/user00.png"
         )
         
         user.$province.id = try provinceExist.requireID()
@@ -88,6 +89,8 @@ extension AuthController{
             countryId: createdUser.$country.id,
             city: createdUser.city ?? "",
             postalCode: createdUser.postalCode,
+            nickname: createdUser.nickname,
+            photo: createdUser.photo,
             active: createdUser.active
         )
     }
