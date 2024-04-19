@@ -41,31 +41,40 @@ extension AuthController{
         
         //Checks if the email exist
         let existingEmail = try await User.query(on: req.db).filter(\.$email == receivedUser.email).first().get()
-        
+       
        if existingEmail != nil {
            throw Abort(.custom(code: 409, reasonPhrase: "Duplicated email"))
         }
         
+        let existingNickname = try await User.query(on: req.db).filter(\.$nickname == receivedUser.nickname).first().get()
+
+        if existingNickname != nil {
+            throw Abort(.custom(code: 409, reasonPhrase: "Duplicated nickname"))
+        }
+        
+        
         //Try to get the province
-        guard let provinceExist = try await Province.find(receivedUser.provinceId, on: req.db) else{
+        guard let provinceExist = try await Province.find(receivedUser.provinceId ?? 1, on: req.db) else{
             throw Abort(.notFound)
         }
         //Try to get the country
-        guard let countryExist = try await Country.find(receivedUser.countryId, on: req.db) else{
+        guard let countryExist = try await Country.find(receivedUser.countryId ?? 1, on: req.db) else{
             throw Abort(.notFound)
         }
         
         
+
         let user = User(
-            name: receivedUser.name,
+            name: receivedUser.name ?? "",
             email: receivedUser.email,
             password: hasedhPassword,
-            lastName1: receivedUser.lastName1,
-            lastName2: receivedUser.lastName2,
-            postalCode: receivedUser.postalCode,
-            city: receivedUser.city,
+            lastName1: receivedUser.lastName1 ?? "",
+            lastName2: receivedUser.lastName2 ?? "",
+            postalCode: receivedUser.postalCode ?? "",
+            city: receivedUser.city ?? "",
             active: receivedUser.active ?? true,
-            avatar: receivedUser.avatar ?? "defaultAvatar"
+            nickname: receivedUser.nickname,
+            photo: receivedUser.photo ?? "http://90.163.132.130:8090/bantu/user00.png"
         )
         
         user.$province.id = try provinceExist.requireID()
@@ -88,6 +97,8 @@ extension AuthController{
             countryId: createdUser.$country.id,
             city: createdUser.city ?? "",
             postalCode: createdUser.postalCode,
+            nickname: createdUser.nickname,
+            photo: createdUser.photo,
             active: createdUser.active
         )
     }
@@ -95,10 +106,16 @@ extension AuthController{
     func signIn(req: Request) async throws -> JWTToken.Public {
         //Get the user
         let user = try req.auth.require(User.self)
-        return try await generateToken(req: req, user: user)
+        let token = try await generateToken(req: req, user: user)
+        
+        guard let userId = user.id else {
+            throw Abort(.expectationFailed, reason: "User not found")
+        }
+       
+        return JWTToken.Public(accesToken: token.accesToken, refreshToken: token.refreshToken, userId: userId )
     }
     
-    func refreshToken(req: Request) async throws -> JWTToken.Public {
+    func refreshToken(req: Request) async throws -> JWTToken.Intern {
         //Get refresh token
         let token = try req.auth.require(JWTToken.self)
         
@@ -118,12 +135,12 @@ extension AuthController{
 
 extension AuthController {
     
-    func generateToken(req: Request, user: User ) async throws -> JWTToken.Public{
+    func generateToken(req: Request, user: User ) async throws -> JWTToken.Intern{
 
         let tokens = JWTToken.generateToken(userID: user.id!)
         let accesSigned = try req.jwt.sign(tokens.accessToken)
         let refreshSigned = try req.jwt.sign(tokens.refreshToken)
         
-        return JWTToken.Public(accesToken: accesSigned, refreshToken: refreshSigned)
+        return JWTToken.Intern(accesToken: accesSigned, refreshToken: refreshSigned)
     }
 }

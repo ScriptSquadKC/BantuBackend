@@ -41,6 +41,18 @@ extension JWTToken {
     struct Public: Content {
         let accesToken: String
         let refreshToken: String
+        let userId: Int
+    }
+    
+    func convertToPublic(accesToken: String,refreshToken: String ,userID: Int) -> JWTToken.Public {
+        return JWTToken.Public(accesToken: accesToken, refreshToken: refreshToken, userId: userID)
+       }
+}
+
+extension JWTToken {
+    struct Intern: Content {
+        let accesToken: String
+        let refreshToken: String
     }
 }
 

@@ -45,9 +45,11 @@ final class User: Model {
     @Parent(key: "country_id")
     var country: Country
  
-    //TODO: See how to do this
-    @Field(key: "avatar")
-    var avatar: String
+    @Field(key: "nickname")
+    var nickname: String
+    
+    @Field(key: "photo")
+    var photo: String?
     
     @Field(key: "active")
     var active: Bool
@@ -63,13 +65,14 @@ final class User: Model {
     
     
     
-    init(id: Int? = nil, name: String, email: String, password: String, lastName1: String, lastName2: String, postalCode: String? = "", city: String? = "", active: Bool, avatar: String, creationDate: Date? = nil, leavingDate: Date? = nil ) {
+    init(id: Int? = nil, name: String, email: String, password: String, lastName1: String, lastName2: String, postalCode: String? = "", city: String? = "", active: Bool, nickname: String, photo: String?, creationDate: Date? = nil, leavingDate: Date? = nil ) {
         self.id = id
         self.name = name
         self.email = email
         self.password = password
         self.active = active
-        self.avatar = avatar
+        self.nickname = nickname
+        self.photo = photo ?? "http://90.163.132.130:8090/bantu/user00.png"
         self.lastName1 = lastName1
         self.lastName2 = lastName2
         self.creationDate = creationDate
@@ -99,31 +102,32 @@ extension User {
         let email: String
         let lastName1: String
         let lastName2: String
-        let provinceId: Int
-        let countryId: Int 
+        let provinceId: Int?
+        let countryId: Int?
         let city: String?
         let postalCode: String?
+        let nickname: String?
+        let photo: String?
         let active: Bool
     }
     
     struct Create: Content, Validatable {
-        let name: String
+        let name: String?
         let email: String
         let password: String
-        let lastName1: String
-        let lastName2: String
-        let provinceId: Int
-        let countryId: Int
+        let lastName1: String?
+        let lastName2: String?
+        let provinceId: Int?
+        let countryId: Int?
         let city: String?
         let postalCode: String?
-        let avatar: String?
+        let nickname: String
+        let photo: String?
         let active: Bool?
+        let isProfessional: Bool?
         
         static func validations(_ validations: inout Vapor.Validations) {
-            validations.add("name", as: String.self, is: !.empty, required: true, customFailureDescription: "Invalid name")
-            validations.add("lastName1", as: String.self, is: !.empty, required: true, customFailureDescription: "Invalid last_name1")
-            validations.add("lastName2", as: String.self, is: !.empty, required: true, customFailureDescription: "Invalid last_name2")
-            //validations.add("province_id", as: Int.self, is: , required: true, customFailureDescription: "Invalid province")
+            validations.add("nickname", as: String.self, is: !.empty, required: true, customFailureDescription: "Invalid nickname")
             validations.add("email", as: String.self, is: .email, required: true, customFailureDescription: "Invalid email")
             validations.add("password", as: String.self, is: .count(6...), required: true, customFailureDescription: "Invalid password")
         }
