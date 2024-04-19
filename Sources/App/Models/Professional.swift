@@ -73,7 +73,7 @@ extension Professional {
     }
     
     func convertToPublic() -> Professional.Public {
-        return Professional.Public(id: self.id ?? 0, nif: self.nif, telephone: self.telephone, photo: self.photo ?? "", description: self.description, creationDate: self.creationDate ?? Date(), active: self.active, name:"")
+        return Professional.Public(id: self.id ?? 0, nif: self.nif, telephone: self.telephone, description: self.description, creationDate: self.creationDate ?? Date(), active: self.active, name:"")
        }
     
     struct Create: Content, Validatable {
