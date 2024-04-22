@@ -70,10 +70,12 @@ extension Professional {
         let creationDate: Date
         let active: Bool
         let name: String?
+        let type: ProTypes
+        let user: User
     }
     
     func convertToPublic() -> Professional.Public {
-        return Professional.Public(id: self.id ?? 0, nif: self.nif, telephone: self.telephone, description: self.description, creationDate: self.creationDate ?? Date(), active: self.active, name:"")
+        return Professional.Public(id: self.id ?? 0, nif: self.nif, telephone: self.telephone, description: self.description, creationDate: self.creationDate ?? Date(), active: self.active, name:"", type: self.pro_Type, user: self.pro_User)
        }
     
     struct Create: Content, Validatable {

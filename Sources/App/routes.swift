@@ -16,6 +16,7 @@ func routes(_ app: Application) throws {
         
         try builder.group(AuthMiddleware()) { builder in
             try builder.register(collection: ProfessionalController())
+            try builder.register(collection: UserController())
         }
     }
     

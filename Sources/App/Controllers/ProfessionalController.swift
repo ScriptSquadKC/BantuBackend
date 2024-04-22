@@ -23,6 +23,8 @@ extension ProfessionalController {
     
     func getAllProfessionals(req: Request) async throws -> [Professional.Public] {
              let professionals = try await Professional.query(on: req.db)
+                .with(\.$pro_User)
+                .with(\.$pro_Type)
                 .filter(\.$active == true)
                 .with(\.$pro_User)
                 .all()
@@ -37,7 +39,11 @@ extension ProfessionalController {
             throw Abort(.badRequest)
         }
         
-        let professional = try await Professional.find(professionalID, on: req.db)
+        let professional = try await Professional.query(on: req.db)
+           .with(\.$pro_User)
+           .with(\.$pro_Type)
+           .filter(\.$id == professionalID)
+           .first()
                 
         guard let foundProfessional = professional else {
                 throw Abort(.notFound)
@@ -46,5 +52,7 @@ extension ProfessionalController {
         
         return foundProfessional.convertToPublic()
     }
+    
+
 }
 

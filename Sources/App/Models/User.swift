@@ -98,18 +98,23 @@ extension User {
     
     struct Public: Content {
         let id: Int
-        let name: String
+        let name: String?
         let email: String
-        let lastName1: String
-        let lastName2: String
+        let lastName1: String?
+        let lastName2: String?
         let provinceId: Int?
         let countryId: Int?
         let city: String?
         let postalCode: String?
         let nickname: String?
-        let photo: String?
+        let photo: String
         let active: Bool
+        let professional: Professional?
     }
+    
+    func convertToPublic(professional: Professional? = nil) -> User.Public {
+        return User.Public(id: self.id ?? 0,name: self.name , email: self.email, lastName1: self.lastName1 , lastName2: self.lastName2 , provinceId: self.province.id ?? 1, countryId: self.country.id ?? 1, city: self.city ?? "", postalCode: self.postalCode ?? "", nickname: self.nickname , photo: self.photo ?? "", active: self.active, professional: professional )
+       }
     
     struct Create: Content, Validatable {
         let name: String?
@@ -132,5 +137,28 @@ extension User {
             validations.add("password", as: String.self, is: .count(6...), required: true, customFailureDescription: "Invalid password")
         }
     }
+    
+}
+
+
+extension User {
+    
+    struct GetAllResponse: Content {
+        let id: Int
+        let name: String?
+        let email: String
+        let lastName1: String?
+        let lastName2: String?
+        let provinceId: Int
+        let countryId: Int
+        let city: String?
+        let postalCode: String?
+        let nickname: String?
+        let photo: String
+    }
+    
+    func convertToGetAllResponse() -> User.GetAllResponse {
+        return User.GetAllResponse(id: self.id ?? 0,name: self.name , email: self.email, lastName1: self.lastName1 , lastName2: self.lastName2 , provinceId: self.province.id ?? 1, countryId: self.country.id ?? 1, city: self.city ?? "", postalCode: self.postalCode ?? "", nickname: self.nickname , photo: self.photo ?? "" )
+       }
     
 }

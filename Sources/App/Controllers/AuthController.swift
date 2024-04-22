@@ -31,8 +31,8 @@ struct AuthController: RouteCollection{
 extension AuthController{
     
     func createUser(req: Request) async throws -> User.Public {
-        print(req)
-//        Checks if the request is valid
+
+        //        Checks if the request is valid
         try User.Create.validate(content: req)
         
         let receivedUser = try req.content.decode(User.Create.self)
@@ -86,21 +86,11 @@ extension AuthController{
         guard let createdUser = try await User.find(user.requireID(), on: req.db) else {
             throw Abort(.notFound)
         }
-                    
-        return User.Public(
-            id: createdUser.id ?? 0,
-            name: createdUser.name,
-            email: createdUser.email,
-            lastName1: createdUser.lastName1,
-            lastName2: createdUser.lastName2,
-            provinceId: createdUser.$province.id,
-            countryId: createdUser.$country.id,
-            city: createdUser.city ?? "",
-            postalCode: createdUser.postalCode,
-            nickname: createdUser.nickname,
-            photo: createdUser.photo,
-            active: createdUser.active
-        )
+        
+        try await createdUser.$province.load(on: req.db)
+        try await createdUser.$country.load(on: req.db)
+        
+        return createdUser.convertToPublic()
     }
     
     func signIn(req: Request) async throws -> JWTToken.Public {
